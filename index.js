@@ -51,12 +51,6 @@
             }
         });
     };
-    const addLabeledText = (html, {label, value}) => {
-        const holder = $('<dd>').appendTo(html);
-        $('<span>').appendTo(holder).text(label);
-        const content = $('<span>').appendTo(holder).text(value);
-        return value => content.text(value);
-    };
     let g_ust = null;
     {
         const {html} = addHideArea('input UST file');
@@ -75,6 +69,18 @@
                 type: 'string'
             });
         });
+        const inputChunkSize = rpgen3.addSelect(html, {
+            label: "歌詞の塊[小節]",
+            save: true,
+            list: [1, 2, 4, 8],
+            value: 2,
+        });
+        const inputChunkShifted = rpgen3.addSelect(html, {
+            label: "歌詞の塊の始まり[拍]",
+            save: true,
+            list: [1, 2, 3, 4],
+            value: 4,
+        });
         $('<dd>').appendTo(html);
         let outputElement = null;
         rpgen3.addBtn(html, '歌詞を出力', () => {
@@ -84,15 +90,33 @@
             }
             outputElement = rpgen3.addInputStr(html, {
                 label: '歌詞',
-                value: ust2txt(g_ust),
+                value: ust2txt(
+                        g_ust,
+                        480 * 4 * inputChunkSize(),
+                        480 * (inputChunkShifted() - 1)
+                    ),
                 textarea: true,
                 copy: true
             });
         }).addClass('btn');
     }
-    const ust2txt = ust => {
+    const ust2txt = (ust, chunkSize, chunkShifted) => {
         const ustEventArray = rpgen4.UstEvent.makeArray(ust);
         const ustNoteArray = rpgen4.UstNote.makeArray(ustEventArray);
-        return ustNoteArray.map(v => v.lyric).join('');
+        let txt = "";
+        let currentIndex = 0;
+        for (const i of Array(Math.ceil(ustNoteArray.at(-1).end / chunkSize)).keys()) {
+            const border = i * chunkSize + chunkShifted;
+            while (currentIndex < ustNoteArray.length) {
+                if (ustNoteArray[currentIndex].start < border) {
+                    txt += ustNoteArray[currentIndex].lyric;
+                    currentIndex++;
+                } else {
+                    break;
+                }
+            }
+            txt += '\n';
+        }
+        return txt;
     };
 })();
