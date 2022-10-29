@@ -79,15 +79,15 @@
         let outputElement = null;
         rpgen3.addBtn(html, '歌詞を出力', () => {
             if (outputElement) {
-                outputElement.prev().remove();
-                outputElement.remove();
+                $("dt").last().remove();
+                $("dd").last().remove();
             }
             outputElement = rpgen3.addInputStr(html, {
                 label: '歌詞',
                 value: ust2txt(g_ust),
                 textarea: true,
                 copy: true
-            }).elm;
+            });
         }).addClass('btn');
     }
     const ust2txt = ust => {
