@@ -109,7 +109,7 @@
     const ust2txt = (ust, isStartedNewline, chunkSize, chunkShifted) => {
         const ustEventArray = rpgen4.UstEvent.makeArray(ust);
         const ustNoteArray = rpgen4.UstNote.makeArray(ustEventArray);
-        if (!isStartedNewline) return ustNoteArray.map(v => v.lyric).join('\n');
+        if (!isStartedNewline) return ustNoteArray.map(v => v.lyric).join('');
         let txt = "";
         let currentIndex = 0;
         for (const i of Array(Math.ceil(ustNoteArray.at(-1).end / chunkSize)).keys()) {
