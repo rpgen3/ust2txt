@@ -69,6 +69,11 @@
                 type: 'string'
             });
         });
+        const isStartedNewline = rpgen3.addInputBool(html, {
+            label: "改行する",
+            save: true,
+            value: true
+        });
         const inputChunkSize = rpgen3.addSelect(html, {
             label: "歌詞の塊[小節]",
             save: true,
@@ -92,6 +97,7 @@
                 label: '歌詞',
                 value: ust2txt(
                         g_ust,
+                        isStartedNewline(),
                         480 * 4 * inputChunkSize(),
                         480 * (inputChunkShifted() - 1)
                     ),
@@ -100,9 +106,10 @@
             });
         }).addClass('btn');
     }
-    const ust2txt = (ust, chunkSize, chunkShifted) => {
+    const ust2txt = (ust, isStartedNewline, chunkSize, chunkShifted) => {
         const ustEventArray = rpgen4.UstEvent.makeArray(ust);
         const ustNoteArray = rpgen4.UstNote.makeArray(ustEventArray);
+        if (!isStartedNewline) return ustNoteArray.map(v => v.lyric).join('\n');
         let txt = "";
         let currentIndex = 0;
         for (const i of Array(Math.ceil(ustNoteArray.at(-1).end / chunkSize)).keys()) {
