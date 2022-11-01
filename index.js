@@ -69,6 +69,7 @@
                 type: 'string'
             });
         });
+        $('<dd>').appendTo(html);
         const isStartedNewline = rpgen3.addInputBool(html, {
             label: "改行する",
             save: true,
