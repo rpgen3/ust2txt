@@ -27,7 +27,8 @@
             'UstNoteMessage',
             'UstTempoMessage',
             'nsx39Scheduler'
-        ].map(v => `https://rpgen3.github.io/nsx39/mjs/${v}.mjs`)
+        ].map(v => `https://rpgen3.github.io/nsx39/mjs/${v}.mjs`),
+        "https://rpgen3.github.io/piano/mjs/resize.mjs",
     ].flat());
     Promise.all([
         'container',
@@ -105,6 +106,7 @@
                 textarea: true,
                 copy: true
             });
+            rpgen4.resize(outputElement.elm);
         }).addClass('btn');
     }
     const ust2txt = (ust, isStartedNewline, chunkSize, chunkShifted) => {
