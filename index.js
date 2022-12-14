@@ -70,6 +70,12 @@
             });
         });
         $('<dd>').appendTo(html);
+        const isTrimmedUnset = rpgen3.addInputBool(html, {
+            label: "未設定の歌詞を削除する",
+            save: true,
+            value: true
+        });
+        $('<dd>').appendTo(html);
         const isStartedNewline = rpgen3.addInputBool(html, {
             label: "改行する",
             save: true,
@@ -98,6 +104,7 @@
                 label: '歌詞',
                 value: ust2txt(
                         g_ust,
+                        isTrimmedUnset(),
                         isStartedNewline(),
                         480 * 4 * inputChunkSize(),
                         480 * (inputChunkShifted() - 1)
@@ -107,7 +114,7 @@
             });
         }).addClass('btn');
     }
-    const ust2txt = (ust, isStartedNewline, chunkSize, chunkShifted) => {
+    const ust2txt = (ust, isTrimmedUnset, isStartedNewline, chunkSize, chunkShifted) => {
         const ustEventArray = rpgen4.UstEvent.makeArray(ust);
         const ustNoteArray = rpgen4.UstNote.makeArray(ustEventArray);
         if (!isStartedNewline) return ustNoteArray.map(v => v.lyric).join('');
@@ -124,6 +131,9 @@
                 }
             }
             txt += '\n';
+        }
+        if (isTrimmedUnset) {
+            txt = txt.replace(/[あ|\n]+$/, '');
         }
         return txt;
     };
